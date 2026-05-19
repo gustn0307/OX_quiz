@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>OX Quiz Application</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container">
+
+    <div
+            class="d-flex flex-column justify-content-center align-items-center"
+            style="height: 100vh;">
+
+        <div class="text-center">
+
+            <h1 class="display-3 fw-bold mb-4">
+                OX Quiz Application
+            </h1>
+
+            <p class="lead text-muted mb-5">
+                Spring Boot + Thymeleaf + JPA 기반 OX 퀴즈 프로젝트
+            </p>
+
+            <div class="d-flex gap-3 justify-content-center">
+
+                <a
+                        href="/member/login"
+                        class="btn btn-primary btn-lg">
+                    로그인
+                </a>
+
+                <a
+                        href="/member/join"
+                        class="btn btn-outline-primary btn-lg">
+                    회원가입
+                </a>
+
+            </div>
+
+            <div class="mt-5 text-muted">
+
+                <p>
+                    일반 회원은 관리자 승인 후 로그인 가능합니다.
+                </p>
+
+                <p>
+                    관리자 계정 : root / admin
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
