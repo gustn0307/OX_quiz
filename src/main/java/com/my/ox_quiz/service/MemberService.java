@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,7 +37,7 @@ public class MemberService {
     // 로그인 성공하면 세션 열기
     public MemberDto login(MemberDto dto) {
         MemberDto loginDto = findByID(dto.getId());
-
+        log.info("서비스/로그인 : DTO : " + loginDto);
         if (loginDto == null) // DB에서 찾아 오지 못 했으면 null 리턴
             return null;
 
@@ -61,7 +63,7 @@ public class MemberService {
     }
 
     public void updatePassword(MemberDto updateDto) {
-        log.info("!!!! 서비스로 넘어온 dto: " + updateDto); // 로그로 잘 넘어오는지 확인
+        log.info("서비스/비번업데이트 :  dto: " + updateDto); // 로그로 잘 넘어오는지 확인
 
         // 이미 로그인된 상태로 넘어오기 때문에 findById로 찾았을 때 없을 수 없다.
         // findById()로 찾아와서 member에 넣어줘야 Spring이 UPDATE문인 것을 구분한다.
@@ -72,6 +74,10 @@ public class MemberService {
             member.setPassword(passwordEncoder.encode(updateDto.getPassword())); // 비밀번호 암호화해서 저장
             memberRepository.save(member);
         }
+    }
+
+    public List<MemberDto> findAll() {
+        return memberRepository.findAll().stream().map(MemberDto::toDto).toList();
     }
 
 

@@ -47,7 +47,6 @@ public class MemberController {
             session.removeAttribute("error");  // 세션 에러 1회성으로 삭제
         }
 
-
         model.addAttribute("dto", new MemberDto()); // 빈 DTO 보내기
 
         return "member/login";
@@ -57,7 +56,7 @@ public class MemberController {
     public String login(@ModelAttribute("dto") MemberDto dto,
                         HttpSession session) {
 
-        log.info("로그인 DTO : " + dto);
+        log.info("컨트롤러/로그인 : HTML에서 넘어온 로그인 DTO : " + dto);
 
         MemberDto loginDto = memberService.login(dto);
 
@@ -67,6 +66,7 @@ public class MemberController {
         }
         // 로그인 성공하면 세션에 DTO 전체를 담기
         session.setAttribute("loginDto", loginDto);
+        log.info("컨트롤러/로그인 : HTML에서 넘어온 로그인 정보로 DB에서 찾아온 DTO : " + loginDto);
 
         // 세션 유지 시간 설정
         // 인자로 준 숫자는 초 단위
@@ -92,7 +92,7 @@ public class MemberController {
     @GetMapping("/my-page")
     public String myPageView(HttpSession session, Model model) {
         MemberDto loginDto = (MemberDto) session.getAttribute("loginDto");
-        log.info("@@@@ loginDto : "+loginDto); // 로그로 제대로 DTO 가져오는지 확인
+        log.info("컨트롤러/마이페이지 :  loginDto : "+loginDto); // 로그로 제대로 DTO 가져오는지 확인
 
         // 이상한 접근(URL 직접 쳐서 접근 등)을 통해 요청한 사용자 -> 로그인 화면으로 이동
         if (ObjectUtils.isEmpty(loginDto))
@@ -111,11 +111,11 @@ public class MemberController {
                                  RedirectAttributes redirectAttributes) {
         MemberDto updateDto = (MemberDto) session.getAttribute("loginDto");
 
-        log.info("#### 비밀번호 수정 전 DTO : "+updateDto); // 수정해야 할 원본 DTO
-        log.info("#### 비밀번호 수정 HTML에서 받아온 DTO : "+dto); // my-page에서 받아온 수정할 비밀번호 가진 DTO
+        log.info("컨트롤러/비번수정 : 비밀번호 수정 전 DTO : "+updateDto); // 수정해야 할 원본 DTO
+        log.info("컨트롤러/비번수정 :  비밀번호 수정 HTML에서 받아온 DTO : "+dto); // my-page에서 받아온 수정할 비밀번호 가진 DTO
 
         updateDto.setPassword(dto.getPassword()); // 비밀번호만 바꾸기
-        log.info("#### 비밀번호 수정 후 DTO : "+updateDto); // 수정해야 할 원본 DTO
+        log.info("컨트롤러/비번수정 :  비밀번호 수정 후 DTO : "+updateDto); // 수정해야 할 원본 DTO
         
         memberService.updatePassword(updateDto);
         
