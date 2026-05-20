@@ -1,6 +1,7 @@
 package com.my.ox_quiz.controller;
 
 import com.my.ox_quiz.dto.MemberDto;
+import com.my.ox_quiz.entity.RoleType;
 import com.my.ox_quiz.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/member")
@@ -37,8 +36,20 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String loginView(Model model) {
+    public String loginView(HttpSession session,
+                            Model model) {
+
+        // "error" 세션에 저장된 에러가 있는지 확인(로그인 실패했는지 확인)
+        String error = (String) session.getAttribute("error");
+
+        if(error != null){ // 로그인 실패시 실패 경고창 출력을 위해 model에 error 값 담아서 보내기
+            model.addAttribute("error", error); //
+            session.removeAttribute("error");  // 세션 에러 1회성으로 삭제
+        }
+
+
         model.addAttribute("dto", new MemberDto()); // 빈 DTO 보내기
+
         return "member/login";
     }
 
@@ -50,9 +61,10 @@ public class MemberController {
 
         MemberDto loginDto = memberService.login(dto);
 
-        if (ObjectUtils.isEmpty(loginDto))  // 로그인 실패하면 계속 로그인 페이지로
+        if (ObjectUtils.isEmpty(loginDto)) { // 로그인 실패하면 계속 로그인 페이지로
+            session.setAttribute("error", "true"); // "error" 세션에 true 담기
             return "redirect:/member/login";
-
+        }
         // 로그인 성공하면 세션에 DTO 전체를 담기
         session.setAttribute("loginDto", loginDto);
 
@@ -61,7 +73,11 @@ public class MemberController {
         // 세션 유지 시간이 지나면 session에 있던 정보 비운다.
         session.setMaxInactiveInterval(60 * 30); // 60초 * 30 = 30분
 
-        return "member/my-page"; // 로그인 성공하면 my-page로 이동
+        if (loginDto.getRole() == RoleType.USER) // role이 USER면 my-page로 이동
+            return "redirect:/member/my-page";
+        else  // role이 ADMIN이면 /quiz URL로 이동(퀴즈 관리 화면)
+            return "redirect:/quiz";
+
     }
 
     // 로그아웃(세션 제거)
@@ -72,4 +88,43 @@ public class MemberController {
         // 초기화면으로 이동
         return "redirect:/";
     }
+
+    @GetMapping("/my-page")
+    public String myPageView(HttpSession session, Model model) {
+        MemberDto loginDto = (MemberDto) session.getAttribute("loginDto");
+        log.info("@@@@ loginDto : "+loginDto); // 로그로 제대로 DTO 가져오는지 확인
+
+        // 이상한 접근(URL 직접 쳐서 접근 등)을 통해 요청한 사용자 -> 로그인 화면으로 이동
+        if (ObjectUtils.isEmpty(loginDto))
+            return "redirect:/member/login";
+
+        // DTO를 모델에 담아 뷰에 전달
+        model.addAttribute("dto", loginDto);
+
+        return "member/my-page";
+    }
+
+    // 내 비밀번호 수정
+    @PostMapping("/password")
+    public String updatePassword(@ModelAttribute("dto") MemberDto dto,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+        MemberDto updateDto = (MemberDto) session.getAttribute("loginDto");
+
+        log.info("#### 비밀번호 수정 전 DTO : "+updateDto); // 수정해야 할 원본 DTO
+        log.info("#### 비밀번호 수정 HTML에서 받아온 DTO : "+dto); // my-page에서 받아온 수정할 비밀번호 가진 DTO
+
+        updateDto.setPassword(dto.getPassword()); // 비밀번호만 바꾸기
+        log.info("#### 비밀번호 수정 후 DTO : "+updateDto); // 수정해야 할 원본 DTO
+        
+        memberService.updatePassword(updateDto);
+        
+        // 다시 로그인하라고 메시지 보내기
+        redirectAttributes.addFlashAttribute("message", "수정한 비밀번호로 다시 로그인해주세요.");
+        
+        session.invalidate(); // 비밀번호 바뀌고 다시 로그인 해야 하니까 세션 전체 삭제
+        
+        return "redirect:/member/login";  // 비밀번호 수정 후 다시 로그인 하도록 하기
+    }
+
 }
