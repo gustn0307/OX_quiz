@@ -20,8 +20,12 @@
 
         <div class="card-body">
 
-            <div class="alert alert-danger">
+            <div th:if = "${error}" class="alert alert-danger">
                 아이디 또는 비밀번호가 틀렸습니다.
+            </div>
+
+            <div th:if = "${message}" class="alert alert-danger">
+                바뀐 비밀번호로 다시 로그인 해주세요.
             </div>
 
             <form th:action="@{/member/login}" method="post" th:object = "${dto}">

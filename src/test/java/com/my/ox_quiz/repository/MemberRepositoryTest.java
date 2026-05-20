@@ -29,7 +29,7 @@ class MemberRepositoryTest {
     void createAdmin() {
         Member member = new Member(); // 빈 멤버 만들기
         member.setId("admin");
-        member.setPassword("1111");
+        member.setPassword(passwordEncoder.encode("1111")); // 암호화해서 넣기
         member.setRole(RoleType.ADMIN);
         member.setStatus(MemberStatus.APPROVED);
 

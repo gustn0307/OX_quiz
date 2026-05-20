@@ -2,9 +2,11 @@ package com.my.ox_quiz.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @Entity
+@DynamicUpdate // 변경된 필드만 실제 UPDATE 쿼리에 반영
 public class Member extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
