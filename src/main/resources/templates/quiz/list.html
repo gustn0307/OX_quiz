@@ -22,10 +22,10 @@
         <div class="d-flex align-items-center gap-2">
 
             <!-- 로그인 상태 -->
-            <div class="d-flex align-items-center gap-2">
+            <div th:if = "${dto != null}" class="d-flex align-items-center gap-2">
 
                 <span class="fw-bold text-primary">
-                    <span>유저이름</span> 님
+                    <span th:text = "${dto.id}">유저이름</span> 님
                 </span>
 
                 <a href="/admin/members"
@@ -41,7 +41,7 @@
             </div>
 
             <!-- 비로그인 상태 -->
-            <div class="d-flex gap-2">
+            <div th:if = "${dto == null}" class="d-flex gap-2">
                 <a
                         href="/member/login"
                         class="btn btn-outline-primary btn-sm">
@@ -66,7 +66,7 @@
         </div>
 
         <div class="card-body">
-            <form action="/quiz/insert" method="post">
+            <form action="/quiz/insert" method="post" th:object = "${quizDto}">
 
                 <div class="mb-3">
                     <label class="form-label">퀴즈 내용</label>
@@ -176,8 +176,9 @@
             </td>
 
             <td>
+                <!--                        th:href="@{/quiz/{id}(id=${quiz.id})}"-->
                 <a
-                        th:href="@{/quiz/{id}(id=${quiz.id})}"
+                        href="/quiz"
                         class="btn btn-warning btn-sm">
                     수정
                 </a>
