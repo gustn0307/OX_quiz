@@ -34,7 +34,7 @@
             </button>
 
             <!-- 관리자만 퀴즈 관리 이동 -->
-            <a href="/quiz"
+            <a th:if = "${session.loginDto.role.name == 'ADMIN'}" href="/quiz"
                     class="btn btn-dark">
                 퀴즈 관리
             </a>
