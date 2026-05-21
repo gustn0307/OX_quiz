@@ -37,7 +37,7 @@ public class MemberService {
     // 로그인 성공하면 세션 열기
     public MemberDto login(MemberDto dto) {
         MemberDto loginDto = findByID(dto.getId());
-        log.info("서비스/로그인 : DTO : " + loginDto);
+        log.info("멤버 서비스/로그인 : DTO : " + loginDto);
         if (loginDto == null) // DB에서 찾아 오지 못 했으면 null 리턴
             return null;
 
@@ -63,12 +63,12 @@ public class MemberService {
     }
 
     public void updatePassword(MemberDto updateDto) {
-        log.info("서비스/비번업데이트 :  dto: " + updateDto); // 로그로 잘 넘어오는지 확인
+        log.info("멤버 서비스/비번업데이트 :  dto: " + updateDto); // 로그로 잘 넘어오는지 확인
 
         // 이미 로그인된 상태로 넘어오기 때문에 findById로 찾았을 때 없을 수 없다.
         // findById()로 찾아와서 member에 넣어줘야 Spring이 UPDATE문인 것을 구분한다.
         // new로 빈 껍데기 만들고 dto로 넣으면 Spring이 UPDATE인지 구분 못해서 INSERT문만 실행됨
-        Member member = memberRepository.findById(updateDto.getId()).orElse(null);
+        Member member = memberRepository.findById(updateDto.getNo()).orElse(null);
 
         if (!ObjectUtils.isEmpty(member)) { // member 찾았으면
             member.setPassword(passwordEncoder.encode(updateDto.getPassword())); // 비밀번호 암호화해서 저장
@@ -80,14 +80,24 @@ public class MemberService {
         return memberRepository.findAll().stream().map(MemberDto::toDto).toList();
     }
 
+    public void updateStatus(Long no) {
+        log.info("멤버 서비스/권한변경 : no : " + no);
+        // PK인 no로 DB에서 엔티티 찾아서 DTO로 변환해서 반환
+        Member member = memberRepository.findById(no).orElse(null);
+        
+        if (!ObjectUtils.isEmpty(member)){ // member 찾았으면
+            
+            if (member.getStatus().equals(MemberStatus.PENDING)) { // 승인 대기 상태이면 승인으로 변경
+                member.setStatus(MemberStatus.APPROVED);
+            }else { // 승인 상태이면 승인 대기 상태로 변경
+                member.setStatus(MemberStatus.PENDING);
+            }
+            
+            memberRepository.save(member);
+        }
+            
 
-//    // PK인 no로 DB에서 엔티티 찾아서 DTO로 변환해서 반환
-//    private MemberDto findByNo(Long no) {
-//        Member member = memberRepository.findById(no).orElse(null);
-//
-//        if (member == null) // 찾지 못하면 null 리턴
-//            return null;
-//
-//        return MemberDto.toDto(member); // 찾은 Entity를 DTO로 변환해서 리턴
-//    }
+    }
+
+
 }
