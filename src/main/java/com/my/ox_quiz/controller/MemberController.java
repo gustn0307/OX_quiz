@@ -122,9 +122,9 @@ public class MemberController {
         // 다시 로그인하라고 메시지 보내기
         redirectAttributes.addFlashAttribute("message", "수정한 비밀번호로 다시 로그인해주세요.");
         
-        session.invalidate(); // 비밀번호 바뀌고 다시 로그인 해야 하니까 세션 전체 삭제
+
         
-        return "redirect:/member/login";  // 비밀번호 수정 후 다시 로그인 하도록 하기
+        return "redirect:/member/my-page";  // 비밀번호 수정 후 다시 my-page로 redirect
     }
 
 }
