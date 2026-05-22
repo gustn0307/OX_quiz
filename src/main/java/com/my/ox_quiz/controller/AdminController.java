@@ -29,7 +29,8 @@ public class AdminController {
         model.addAttribute("member", new MemberDto());
         return "admin/member-list";
     }
-    
+
+    // 회원 승인
     @PostMapping("/member/approve")
     public String memberApprove(MemberDto dto) {
         // 로그인은 관리자고 승인은 회원이므로 HTML에서 승인 버튼 누른 회원의 DTO 받아와야 함
@@ -39,7 +40,8 @@ public class AdminController {
 
         return "redirect:/admin/members";
     }
-    
+
+    // 회원 비밀번호 수정
     @PostMapping("member/password")
     public String memberPwUpdate(MemberDto dto) {
         // 로그인은 관리자고 승인은 회원이므로 HTML에서 수정 버튼 회원의 DTO 받아와야 함

@@ -28,13 +28,13 @@
             </a>
 
             <!-- 승인 전 회원 -->
-            <button class="btn btn-secondary"
+            <button th:if = "${session.loginDto.status.name == 'PENDING'}" class="btn btn-secondary"
                     disabled>
                 승인 필요
             </button>
 
             <!-- 관리자만 퀴즈 관리 이동 -->
-            <a href="/quiz"
+            <a th:if = "${session.loginDto.role.name == 'ADMIN'}" href="/quiz"
                     class="btn btn-dark">
                 퀴즈 관리
             </a>
@@ -50,16 +50,16 @@
     </div>
 
     <!-- 승인 상태 안내 -->
-    <div class="alert alert-success">
+    <div th:if = "${session.loginDto.status.name == 'APPROVED'}" class="alert alert-success">
         관리자 승인이 완료되었습니다. 퀴즈 플레이가 가능합니다.
     </div>
 
-    <div class="alert alert-warning">
+    <div th:if = "${session.loginDto.status.name == 'PENDING'}" class="alert alert-warning">
         관리자 승인 후 퀴즈 플레이가 가능합니다.
     </div>
 
     <!-- 메시지 -->
-    <div class="alert alert-info" >
+    <div th:if = "${message}" class="alert alert-info" >
         비밀번호가 수정되었습니다.
     </div>
 
@@ -78,7 +78,7 @@
 
                 <tr>
                     <th style="width: 200px;">아이디</th>
-                    <td>
+                    <td th:text = "${session.loginDto.id}">
                         user01
                     </td>
                 </tr>
@@ -86,11 +86,11 @@
                 <tr>
                     <th>권한</th>
                     <td>
-                        <span class="badge bg-danger">
+                        <span th:if = "${session.loginDto.role.name == 'ADMIN'}" class="badge bg-danger">
                             ADMIN
                         </span>
 
-                        <span class="badge bg-primary">
+                        <span th:if = "${session.loginDto.role.name == 'USER'}" class="badge bg-primary">
                             USER
                         </span>
                     </td>
@@ -99,11 +99,11 @@
                 <tr>
                     <th>승인 상태</th>
                     <td>
-                        <span class="badge bg-success">
+                        <span th:if = "${session.loginDto.status.name == 'APPROVED'}" class="badge bg-success">
                             승인 완료
                         </span>
 
-                        <span class="badge bg-secondary">
+                        <span th:if = "${session.loginDto.status.name == 'PENDING'}" class="badge bg-secondary">
                             승인 대기
                         </span>
                     </td>
@@ -112,7 +112,7 @@
                 <tr>
                     <th>맞은 문제 수</th>
                     <td>
-                        <span
+                        <span th:text = "${session.loginDto.answerTrue}"
                                 class="badge bg-primary">
                             0
                         </span>
@@ -122,7 +122,7 @@
                 <tr>
                     <th>틀린 문제 수</th>
                     <td>
-                        <span
+                        <span th:text = "${session.loginDto.answerFalse}"
                                 class="badge bg-danger">
                             0
                         </span>
@@ -131,7 +131,7 @@
 
                 <tr>
                     <th>가입일</th>
-                    <td>
+                    <td th:text = "${#temporals.format(session.loginDto.createdAt, 'yyyy-MM-dd HH:mm')}">
                         2026-05-16 10:00
                     </td>
                 </tr>

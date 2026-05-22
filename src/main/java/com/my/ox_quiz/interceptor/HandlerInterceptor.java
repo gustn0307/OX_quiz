@@ -28,6 +28,7 @@ public class HandlerInterceptor implements org.springframework.web.servlet.Handl
         HttpSession session = request.getSession(false); // 컨트롤러로 전달되는 세션값 받음
 
         String requestURI = request.getRequestURI(); // 사용자가 요청했던 URI
+        log.info("인터셉터 : 사용자가 요청했던 URI : " + requestURI);
 
         // 로그인 체크: 로그인 정보가 세션에 없는 경우 /my-page, /quiz/, /admin/ 접근시 로그인 화면으로 redirect
         MemberDto loginMember = (MemberDto) session.getAttribute("loginDto");
@@ -36,9 +37,10 @@ public class HandlerInterceptor implements org.springframework.web.servlet.Handl
             response.sendRedirect("/member/login"); // 로그인 화면으로 redirect
         }
 
-        // 관리자 체크: ADMIN 아니면 퀴즈 CRUD관련, /admin/** URL 접근 시 접근 불가 처리
-        if (!loginMember.getRole().equals(RoleType.ADMIN))
-            response.sendRedirect(requestURI); // 접근 불가 처리(요청했던 URL로 다시 이동시킴)
+        // 관리자 체크: ADMIN 아니면 /quiz/** 관련, /admin/** URL 접근 시 접근 불가 처리
+        // /quiz/play, /quiz/check는 접근 가능함
+        if (( !requestURI.equals("/quiz/check") && !requestURI.equals("/quiz/play")) && !loginMember.getRole().equals(RoleType.ADMIN))
+            response.sendRedirect("/"); // 접근 불가 처리(최초 화면으로 이동시킴)
 
         // 승인 회원 체크: PENDING 상태이면 my-page로 redirect
         if(loginMember.getStatus().equals(MemberStatus.PENDING)){

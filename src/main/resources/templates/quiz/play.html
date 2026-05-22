@@ -20,9 +20,9 @@
                 OX 퀴즈 게임
             </h1>
 
-            <div>
+            <div th:if = "${#lists.isEmpty(dtoList)}">
 
-                <h3 class="text-danger mb-4">
+                <h3  class="text-danger mb-4">
                     등록된 문제가 없습니다.
                 </h3>
 
@@ -34,7 +34,7 @@
 
             </div>
 
-            <div>
+            <div th:if = "${!#lists.isEmpty(dtoList)}">
 
                 <h3 class="mb-4">
                     퀴즈
@@ -42,18 +42,21 @@
 
                 <div class="alert alert-light border mb-5">
 
-                    <h4>달팽이도 이빨이 있다. - 문제출력</h4>
+                    <h4 th:text = "${randomQuiz.content}">달팽이도 이빨이 있다. - 문제출력</h4>
 
                 </div>
 
                 <form
                         action="/quiz/check"
-                        method="post">
+                        method="post"
+                        th:object = "${resultDto}"
+                >
 
+                    <input type="hidden" name = "id" th:value = "${randomQuiz.id}">
 
                     <button
                             type="submit"
-                            name="userAnswer"
+                            name="answer"
                             value="true"
                             class="btn btn-primary btn-lg me-3">
                         O
@@ -61,7 +64,7 @@
 
                     <button
                             type="submit"
-                            name="userAnswer"
+                            name="answer"
                             value="false"
                             class="btn btn-danger btn-lg">
                         X

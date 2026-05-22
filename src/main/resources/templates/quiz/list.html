@@ -66,11 +66,16 @@
         </div>
 
         <div class="card-body">
-            <form action="/quiz/insert" method="post" th:object = "${quizDto}">
+            <form
+                    onsubmit="return validForm()"
+                    action="/quiz/insert"
+                    method="post"
+                    th:object = "${quizDto}">
 
                 <div class="mb-3">
-                    <label class="form-label">퀴즈 내용</label>
+                    <label for="content" class="form-label">퀴즈 내용</label>
                     <textarea
+                            id="content"
                             name="content"
                             rows="5"
                             class="form-control"
@@ -107,8 +112,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">작성자</label>
+                    <label for="writer" class="form-label">작성자</label>
                     <input
+                            id="writer"
                             type="text"
                             name="writer"
                             class="form-control"
@@ -139,7 +145,7 @@
     </div>
 
     <!-- 퀴즈 목록 -->
-    <table class="table table-bordered table-hover align-middle">
+    <table  th:if = "${!#lists.isEmpty(quizDtoList)}" class="table table-bordered table-hover align-middle">
 
         <thead class="table-dark">
         <tr>
@@ -153,32 +159,31 @@
         </thead>
 
         <tbody>
-        <tr>
+        <tr th:each = "quiz : ${quizDtoList}">
 
-            <td>1</td>
+            <td th:text = "${quiz.id}">1</td>
 
-            <td>
+            <td th:text = "${quiz.content}">
                 달팽이도 이빨이 있다.
             </td>
 
             <td>
-                <span class="badge bg-primary">
+                <span th:if = "${quiz.answer}" class="badge bg-primary">
                     O
                 </span>
 
-                <span class="badge bg-danger">
+                <span th:if = "${!quiz.answer}" class="badge bg-danger">
                     X
                 </span>
             </td>
 
-            <td>
+            <td th:text = "${quiz.writer}">
                 홍길동
             </td>
 
             <td>
-                <!--                        th:href="@{/quiz/{id}(id=${quiz.id})}"-->
                 <a
-                        href="/quiz"
+                        th:href="@{/quiz/{id}(id=${quiz.id})}"
                         class="btn btn-warning btn-sm">
                     수정
                 </a>
@@ -190,6 +195,7 @@
                         method="post"
                         onsubmit="return confirm('정말 삭제하시겠습니까?');">
 
+                    <input type="hidden" name = "id" th:value = "${quiz.id}">
                     <button
                             type="submit"
                             class="btn btn-danger btn-sm">
@@ -204,11 +210,31 @@
     </table>
 
     <!-- 퀴즈가 없을 때 -->
-    <div class="alert alert-secondary text-center">
+    <div th:if = "${#lists.isEmpty(quizDtoList)}" class="alert alert-secondary text-center">
         등록된 퀴즈가 없습니다.
     </div>
 
 </div>
+<script>
+    function validForm() {
+        const content = document.getElementById("content");
+        const writer = document.getElementById("writer");
 
+        //  trim()을 사용하여 앞뒤 공백을 제거한 후 빈 문자열인지
+        if (content.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        if(writer.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        return true; // 제출 허용
+    }
+</script>
 </body>
 </html>

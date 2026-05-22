@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>OX 퀴즈 결과</title>
@@ -21,12 +21,12 @@
             </h1>
 
             <!-- 정답일 때 -->
-            <h2 class="mb-5 text-primary">
+            <h2 th:if = "${result}" class="mb-5 text-primary">
                 정답입니다! 🎉
             </h2>
 
             <!-- 오답일 때 -->
-            <h2 class="mb-5 text-danger">
+            <h2 th:if = "${!result}" class="mb-5 text-danger">
                 오답입니다. 😢
             </h2>
 
@@ -37,13 +37,13 @@
             </a>
 
             <!-- ADMIN일 때 -->
-            <a href="/quiz"
+            <a th:if = "${session.loginDto.role.name == 'ADMIN'}" href="/quiz"
                class="btn btn-secondary">
                 퀴즈 관리
             </a>
 
             <!-- USER일 때 -->
-            <a href="/member/my-page"
+            <a th:if = "${session.loginDto.role.name == 'USER'}" href="/member/my-page"
                class="btn btn-secondary">
                 마이페이지
             </a>
