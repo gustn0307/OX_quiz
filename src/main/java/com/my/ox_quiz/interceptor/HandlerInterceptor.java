@@ -37,9 +37,9 @@ public class HandlerInterceptor implements org.springframework.web.servlet.Handl
             response.sendRedirect("/member/login"); // 로그인 화면으로 redirect
         }
 
-        // 관리자 체크: ADMIN 아니면 퀴즈 CRUD관련, /admin/** URL 접근 시 접근 불가 처리
-        // /quiz/play는 접근 가능함
-        if (!requestURI.equals("/quiz/play") && !loginMember.getRole().equals(RoleType.ADMIN))
+        // 관리자 체크: ADMIN 아니면 /quiz/** 관련, /admin/** URL 접근 시 접근 불가 처리
+        // /quiz/play, /quiz/check는 접근 가능함
+        if (( !requestURI.equals("/quiz/check") && !requestURI.equals("/quiz/play")) && !loginMember.getRole().equals(RoleType.ADMIN))
             response.sendRedirect(requestURI); // 접근 불가 처리(요청했던 URL로 다시 이동시킴)
 
         // 승인 회원 체크: PENDING 상태이면 my-page로 redirect

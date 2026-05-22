@@ -88,8 +88,10 @@ public class QuizController {
         List<QuizDto> quizDtoList = new ArrayList<>(); // 전체 퀴즈 리스트
         quizDtoList = quizService.findAll();
 
-        log.info("퀴즈 컨트롤러/퀴즈풀기 전체 리스트 : " + quizDtoList);
+        log.info("퀴즈 컨트롤러/퀴즈풀기 : 전체 리스트 : " + quizDtoList);
         int randomIndex = (int)(Math.random()*quizDtoList.size()); // 0 ~ 리스트 사이즈 까지의 랜덤 인덱스 정수
+        log.info("퀴즈 컨트롤러/퀴즈풀기 : 리스트의 랜덤 인덱스 : " + randomIndex);
+        log.info("퀴즈 컨트롤러/퀴즈풀기 : 랜덤 DTO : " + quizDtoList.get(randomIndex));
 
         model.addAttribute("dtoList", quizDtoList); // 리스트가 비었는지 확인용으로 HTML에 보내기
         model.addAttribute("randomQuiz", quizDtoList.get(randomIndex)); // 섞인 리스트의 첫 번째 값 보내기
@@ -99,8 +101,19 @@ public class QuizController {
     }
 
     @PostMapping("/check")
-    public String quizCheck(@ModelAttribute("resultDto") QuizDto quizDto) {
-        log.info("퀴즈 컨트롤러/퀴즈 정답 제출 : HTML에서 넘어온 DTO : " + quizDto);
+    public String quizCheck(@ModelAttribute("resultDto") QuizDto quizDto,
+                            Model model) {
+
+//        MemberDto loginDto = (MemberDto) session.getAttribute("loginDto"); // ADMIN 인지 확인용
+        QuizDto forCheckDto = quizService.findById(quizDto.getId()); // 정답 맞췄는지 확인(findById로 찾아서 비교하기)
+        boolean result = forCheckDto.getAnswer().equals(quizDto.getAnswer()); // 정답 일치하는지 저장하는 result 변수
+
+        log.info("퀴즈 컨트롤러/퀴즈 정답 제출 : HTML에서 넘어온 DTO : " + quizDto); // id와 answer만 가져오기
+        log.info("퀴즈 컨트롤러/퀴즈 정답 제출 : 정답확인용 DTO : " + forCheckDto); // 정답 확인용 DTO
+        log.info("퀴즈 컨트롤러/퀴즈 정답 제출 : 정답 일치 여부 변수 : " + result); // 정답 일치 여부 변수
+
+        model.addAttribute("result", result); // 정답 맞췄는지 result.html에 전달
+
         return "quiz/result";
     }
 }

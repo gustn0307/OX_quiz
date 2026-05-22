@@ -52,18 +52,19 @@
                         th:object = "${resultDto}"
                 >
 
-                    <input type="hidden" name = "id" th:value = "${resultDto.id}">
-                    <button th:field = "*{answer}"
+                    <input type="hidden" name = "id" th:value = "${randomQuiz.id}">
+
+                    <button
                             type="submit"
-                            name="userAnswer"
+                            name="answer"
                             value="true"
                             class="btn btn-primary btn-lg me-3">
                         O
                     </button>
 
-                    <button th:field = "*{answer}"
+                    <button
                             type="submit"
-                            name="userAnswer"
+                            name="answer"
                             value="false"
                             class="btn btn-danger btn-lg">
                         X
