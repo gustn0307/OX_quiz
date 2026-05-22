@@ -21,6 +21,7 @@
         <div class="card-body">
 
             <form
+                    onsubmit="return validForm()"
                     action="/quiz/update"
                     method="post"
                     th:object="${dto}"
@@ -102,6 +103,26 @@
     </div>
 
 </div>
+<script>
+    function validForm() {
+        const content = document.getElementById("content");
+        const writer = document.getElementById("writer");
 
+        //  trim()을 사용하여 앞뒤 공백을 제거한 후 빈 문자열인지
+        if (content.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        if(writer.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        return true; // 제출 허용
+    }
+</script>
 </body>
 </html>

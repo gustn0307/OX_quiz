@@ -21,8 +21,16 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     // 회원가입
-    public void signUp(MemberDto dto) {
+    public boolean signUp(MemberDto dto) {
         Member member = new Member(); // 빈 Entity 생성
+
+        List<MemberDto> memberDtoList = findAll(); // 전체 회원 리스트
+        long sameIdCount = memberDtoList.stream().filter(x -> x.getId().equals(dto.getId())).count();
+        if(sameIdCount > 0) // 중복 아이디 회원가입 시도 시
+            return false; // 가입 불가 처리
+
+        if(!checkAdminNum()) // 관리자 2명 이상 생성 시도
+            return false; // 가입 불가 처리
 
         // DTO -> Entity 변환(비밀번호 인코딩, role USER로 설정)
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -31,6 +39,7 @@ public class MemberService {
         member = MemberDto.toEntity(dto);
 
         memberRepository.save(member); // DB에 저장
+        return true; // 정상적인 회원가입 완료 시 true 리턴
     }
 
     // 로그인
@@ -95,5 +104,13 @@ public class MemberService {
             
             memberRepository.save(member);
         }
+    }
+
+
+    public boolean checkAdminNum() {
+        List<MemberDto> memberDtoList = findAll(); // 전체 회원 리스트 DB에서 받아오기
+        // 리스트에서 관리자인 멤버의 수 받기
+        long adminNum = memberDtoList.stream().filter(x -> x.getRole().equals(RoleType.ADMIN)).count();
+        return adminNum >= 1; // 관리자 수가 1이 아니면 true, 1 이상이면 false 리턴
     }
 }

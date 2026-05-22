@@ -54,9 +54,14 @@
                             class="form-control"
                             required>
                 </div>
+                <div th:if = "${message}">
+                    <p
+                            th:text = "${message}"
+                            class="mb-3 text-danger fw-bold">
+                    ></p>
+                </div>
 
                 <div
-
                         id="passwordMessage"
                         class="mb-3 text-danger fw-bold">
                 </div>

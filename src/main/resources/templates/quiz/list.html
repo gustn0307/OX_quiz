@@ -66,11 +66,16 @@
         </div>
 
         <div class="card-body">
-            <form action="/quiz/insert" method="post" th:object = "${quizDto}">
+            <form
+                    onsubmit="return validForm()"
+                    action="/quiz/insert"
+                    method="post"
+                    th:object = "${quizDto}">
 
                 <div class="mb-3">
-                    <label class="form-label">퀴즈 내용</label>
+                    <label for="content" class="form-label">퀴즈 내용</label>
                     <textarea
+                            id="content"
                             name="content"
                             rows="5"
                             class="form-control"
@@ -107,8 +112,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">작성자</label>
+                    <label for="writer" class="form-label">작성자</label>
                     <input
+                            id="writer"
                             type="text"
                             name="writer"
                             class="form-control"
@@ -209,6 +215,26 @@
     </div>
 
 </div>
+<script>
+    function validForm() {
+        const content = document.getElementById("content");
+        const writer = document.getElementById("writer");
 
+        //  trim()을 사용하여 앞뒤 공백을 제거한 후 빈 문자열인지
+        if (content.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        if(writer.value.trim() === ''){
+            alert('공백만 입력하거나 빈 칸일 수 없습니다.')
+            content.focus();
+            return false; // 제출 막기
+        }
+
+        return true; // 제출 허용
+    }
+</script>
 </body>
 </html>
